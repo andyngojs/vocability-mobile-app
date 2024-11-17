@@ -1,4 +1,4 @@
-package com.vocability
+package com.dobeeteam.vocability
 
 import android.app.Application
 import com.facebook.react.PackageList
