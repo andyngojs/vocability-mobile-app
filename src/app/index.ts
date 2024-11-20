@@ -1,3 +1,4 @@
 export {default} from './App';
-export * from './store.ts';
-export * from './hooks.ts';
+export * from './store';
+export * from './hooks';
+export * from './config';
