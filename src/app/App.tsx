@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {Provider} from 'react-redux';
+import FlashMessage from 'react-native-flash-message';
 import {store} from './store.ts';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -14,6 +15,8 @@ function App(): React.JSX.Element {
         <SafeAreaProvider>
           <GestureHandlerRootView style={styles.container}>
             <RootNavigator />
+
+            <FlashMessage position="top" />
           </GestureHandlerRootView>
         </SafeAreaProvider>
       </NavigationContainer>

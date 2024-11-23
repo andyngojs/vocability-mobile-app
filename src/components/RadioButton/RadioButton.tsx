@@ -16,11 +16,12 @@ export type Item = {
 
 interface RadioButtonProps {
   listData: Item[];
+  currentValue: string;
+  onChangeValue: (value: string) => void;
   colorInactive?: string;
   colorActive?: string;
   iconActive?: string;
   style?: StyleProp<ViewStyle>;
-  onChangeValue: (value: Item) => void;
   containerStyle?: StyleProp<ViewStyle>;
 }
 
@@ -30,14 +31,19 @@ const _RadioButton: React.FC<RadioButtonProps> = ({
   colorActive = '#FBAF17',
   style,
   onChangeValue,
+  currentValue,
   containerStyle,
 }) => {
-  const [valueChecked, setValueChecked] = React.useState<Item>();
+  const [valueChecked, setValueChecked] = React.useState<Item | undefined>(
+    currentValue
+      ? listData.find(item => item.value === currentValue)
+      : undefined,
+  );
 
   const handleChangeRadio = useCallback(
     (item: Item) => () => {
       setValueChecked(item);
-      onChangeValue(item);
+      onChangeValue(item.value);
     },
     [onChangeValue],
   );
