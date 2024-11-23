@@ -3,12 +3,15 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {appConfig} from '@src/app';
 import {Icon, AppModal} from '@src/components';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationScreenProps} from '@src/types/navigation';
 
 const _Collection = () => {
   const [isVisible, setIsVisible] = React.useState(false);
+  const navigation = useNavigation<NavigationScreenProps>();
 
-  const handleShowModalCreateCollection = useCallback(() => {
-    setIsVisible(true);
+  const handleCreateCollection = useCallback(() => {
+    navigation.navigate('CreateNewCollection');
   }, []);
 
   const handleHideModalCreateCollection = useCallback(() => {
@@ -23,14 +26,14 @@ const _Collection = () => {
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.buttonContainer}
-          onPress={handleShowModalCreateCollection}>
+          onPress={handleCreateCollection}>
           <Icon name={'add-circle'} size={18} color="#fff" />
           <Text style={{fontSize: 14, color: '#fff'}}>Create collection</Text>
         </TouchableOpacity>
       </View>
 
       <AppModal
-        position={'center'}
+        position={'bottom'}
         isVisible={isVisible}
         onClose={handleHideModalCreateCollection}
         title={'Create collection'}>
@@ -38,7 +41,6 @@ const _Collection = () => {
         <Text>Hhello ddjdj</Text>
         <Text>Hhello ddjdj</Text>
         <Text>Hhello ddjdj</Text>
-
       </AppModal>
     </SafeAreaView>
   );
