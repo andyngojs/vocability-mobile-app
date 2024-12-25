@@ -1,13 +1,12 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {appConfig} from '@src/app';
 import {Icon, AppModal} from '@src/components';
 import {useNavigation} from '@react-navigation/native';
 import {NavigationScreenProps} from '@src/types/navigation';
 
-const _Collection = () => {
-  const [isVisible, setIsVisible] = React.useState(false);
+const Collection = React.memo(() => {
+  const [isVisible, setIsVisible] = useState(false);
   const navigation = useNavigation<NavigationScreenProps>();
 
   const handleCreateCollection = useCallback(() => {
@@ -44,9 +43,9 @@ const _Collection = () => {
       </AppModal>
     </SafeAreaView>
   );
-};
+});
 
-const Collection = React.memo(_Collection);
+Collection.displayName = 'Collection';
 export default Collection;
 
 const styles = StyleSheet.create({

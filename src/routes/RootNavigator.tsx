@@ -14,7 +14,7 @@ const RootNavigator = () => {
   const screenOptions: NativeStackNavigationOptions = useMemo(
     () => ({
       headerShown: false,
-      animation: 'slide_from_left',
+      animation: 'ios_from_left',
     }),
     [],
   );
@@ -26,7 +26,7 @@ const RootNavigator = () => {
       <RootStack.Screen name="BottomTab" component={BottomTabNavigator} />
       <RootStack.Screen name="Home" component={Home} />
 
-      <RootStack.Group>
+      <RootStack.Group screenOptions={{presentation: 'modal', animation: 'fade_from_bottom'}}>
         <RootStack.Screen
           name="CreateNewCollection"
           component={CreateNewCollection}

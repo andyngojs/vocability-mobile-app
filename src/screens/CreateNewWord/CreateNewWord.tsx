@@ -1,66 +1,146 @@
-import React, {useCallback, useState} from 'react';
-import {ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useMemo, useState} from 'react';
+import {KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {AppModal, Icon, NavBar} from '@src/components';
-import {RadioButton} from '@src/components/RadioButton';
+import {appConfig} from '@src/app';
+import {
+  AppInput,
+  AppModal,
+  BundleIconSetName,
+  Button,
+  Icon,
+  InputButton,
+  NavBar,
+  RadioButton,
+} from '@src/components';
+import {showMessage} from 'react-native-flash-message';
 
-const partOfSpeech = [{
-  label: 'Noun',
-  value: 'noun',
-}, {
-  label: 'Adjective',
-  value: 'adj'
-}, {
-  label: 'Adverse',
-  value: 'adv'
-}]
+const partOfSpeech = [
+  {
+    label: 'Noun',
+    value: 'noun',
+  },
+  {
+    label: 'Adjective',
+    value: 'adj',
+  },
+  {
+    label: 'Adverse',
+    value: 'adv',
+  },
+];
 
 const _CreateNewWord = () => {
-  const {bottom} = useSafeAreaInsets()
+  const {bottom} = useSafeAreaInsets();
   const [isVisible, setIsVisible] = React.useState(false);
+  const [isShowCollection, setIsShowCollection] = React.useState(false);
   const [params, setParams] = useState({
     newWord: '',
+    partOfSpeech: '',
+    collection: '',
     meaning: '',
-    note: ''
-  })
+    note: '',
+  });
 
-  const handleChangeText = useCallback((field: string) => (text: string) => {
-    setParams((prevState) => {
-      return {
-        ...prevState,
-        [field]: text
-      }
-    })
-  }, [])
+  const isDisableButton = useMemo(
+    () => !params['meaning'] || !params['partOfSpeech'] || !params['newWord'],
+    [params],
+  );
+
+  const handleAddWord = useCallback(() => {
+    showMessage({
+      message: 'Add new word',
+      type: 'success',
+      icon: 'success',
+    });
+  }, []);
+
+  const handleChangeText = useCallback(
+    (field: string) => (text: string) => {
+      setParams(prevState => {
+        return {
+          ...prevState,
+          [field]: text,
+        };
+      });
+    },
+    [],
+  );
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <NavBar title={'Create New Word'}  />
+    <SafeAreaView style={styles.container}>
+      <NavBar title={'Create New Word'} />
 
-      <ScrollView showsVerticalScrollIndicator={false} style={{paddingHorizontal: 12, backgroundColor:'#fff', paddingBottom: bottom}}>
-        <View style={styles.container}>
-          <View style={{borderColor: '#dadada', borderWidth: 1, borderRadius: 10, backgroundColor: '#fff'}}>
-            <TextInput placeholder={'Enter New Word'} value={params['newWord']} onChangeText={handleChangeText('newWord')} style={{fontSize: 14, paddingHorizontal: 16}} />
+      <KeyboardAvoidingView
+        behavior={appConfig.isiOS ? 'padding' : 'height'}
+        style={{flex: 1}}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={[styles.contentContainerWrapper, {paddingBottom: bottom}]}>
+          <View style={styles.formContainer}>
+            <AppInput
+              placeholder={'Enter New Word'}
+              value={params['newWord']}
+              onChangeText={handleChangeText('newWord')}
+            />
+
+            <InputButton
+              onPress={() => setIsVisible(true)}
+              value={params['partOfSpeech']}
+              placeholder={'Parts of speech'}
+            />
+
+            <InputButton
+              onPress={() => setIsShowCollection(true)}
+              value={params['collection']}
+              placeholder={'Choose collection'}
+            />
+
+            <AppInput
+              placeholder={'Meaning'}
+              value={params['meaning']}
+              onChangeText={handleChangeText('meaning')}
+            />
+
+            <AppInput
+              inputContainerStyle={styles.inputContainer}
+              placeholder={'Note'}
+              value={params['note']}
+              onChangeText={handleChangeText('note')}
+              numberOfLines={2}
+              multiline={true}
+            />
           </View>
+        </ScrollView>
 
-          <TouchableOpacity onPress={() => setIsVisible(true)} style={{borderColor: '#dadada', borderWidth: 1, borderRadius: 10, backgroundColor: '#fff', marginTop: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-            paddingHorizontal: 12,
-            paddingVertical: 8
-          }}>
-            <Text style={{fontSize: 14, color: '#171717', }} >Parts of speech</Text>
+        <Button
+          onPress={handleAddWord}
+          disabled={isDisableButton}
+          style={[
+            styles.buttonSubmit,
+            {
+              marginBottom: bottom + 16,
+            },
+          ]}
+          title={'Add Word'}
+          iconLeft={
+            <Icon
+              bundle={BundleIconSetName.IONICONS}
+              name={'add-circle'}
+              size={20}
+              color={'#fff'}
+            />
+          }
+        />
+      </KeyboardAvoidingView>
 
-            <Icon name={'chevron-down'} size={20} color={'#171717'} />
-          </TouchableOpacity>
+      <AppModal
+        canPressBackdrop={true}
+        position={'bottom'}
+        isVisible={isShowCollection}
+        onClose={() => setIsShowCollection(false)}
+        title={'Choose collection'}>
 
-          <View style={{borderColor: '#dadada', borderWidth: 1, borderRadius: 10, backgroundColor: '#fff', marginTop: 12}}>
-            <TextInput placeholder={'Meaning'} value={params['meaning']} onChangeText={handleChangeText('meaning')} style={{fontSize: 14, paddingHorizontal: 16}} />
-          </View>
-
-          <View style={{borderColor: '#dadada', borderWidth: 1, borderRadius: 10, backgroundColor: '#fff', marginTop: 12, height: '50%'}}>
-            <TextInput placeholder={'Note'} value={params['note']} onChangeText={handleChangeText('note')} style={{fontSize: 14, paddingHorizontal: 16, height: '100%'}} numberOfLines={2} multiline={true} />
-          </View>
-        </View>
-      </ScrollView>
+      </AppModal>
 
       <AppModal
         canPressBackdrop={true}
@@ -68,17 +148,36 @@ const _CreateNewWord = () => {
         isVisible={isVisible}
         onClose={() => setIsVisible(false)}
         title={'Choose part of speech'}>
-          <RadioButton listData={partOfSpeech} onChangeValue={(value) => console.log(value)} />
+        <RadioButton
+          listData={partOfSpeech}
+          currentValue={params['partOfSpeech']}
+          onChangeValue={handleChangeText('partOfSpeech')}
+        />
       </AppModal>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-const CreateNewWord = React.memo(_CreateNewWord)
-export default CreateNewWord
+const CreateNewWord = React.memo(_CreateNewWord);
+export default CreateNewWord;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  contentContainerWrapper: {
+    paddingHorizontal: 12,
+    backgroundColor: '#fff',
+  },
+  formContainer: {
     marginTop: 16,
-  }
-})
+  },
+  inputContainer: {
+    height: '50%',
+  },
+  buttonSubmit: {
+    marginHorizontal: 12,
+    marginTop: 12,
+  },
+});
